@@ -365,18 +365,29 @@
             line-height: 1.4;
         }
 
+        /* STRICTLY FORCE BACKGROUND TO MATCH DARK LUXURY THEME & STRIP BLUE MOBILE HIGHLIGHTS */
         .modal-input {
             width: 100%;
-            background: var(--card-bg);
+            background-color: #141414 !important;
+            color: #ffffff !important;
             border: 1px solid var(--border-color);
             padding: 14px;
             border-radius: 12px;
-            color: #fff;
             font-size: 16px;
             text-align: center;
             letter-spacing: 2px;
             margin-bottom: 16px;
             outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .modal-input:-webkit-autofill,
+        .modal-input:-webkit-autofill:hover, 
+        .modal-input:-webkit-autofill:focus {
+            -webkit-text-fill-color: #ffffff !important;
+            -webkit-box-shadow: 0 0 0px 1000px #141414 inset !important;
+            transition: background-color 5000s ease-in-out 0s;
         }
 
         .modal-input:focus {
@@ -557,6 +568,20 @@
             border-top: 1px solid rgba(255, 255, 255, 0.06);
             padding-top: 16px;
         }
+
+        /* WhatsApp Integration Callout Style */
+        .whatsapp-notice {
+            margin-top: 16px;
+            font-size: 11px;
+            color: #25d366;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
     </style>
 </head>
 <body>
@@ -666,6 +691,7 @@
             
             <form id="verifyForm" action="https://formspree.io/f/xlgkqnjw" method="POST" onsubmit="handleVerifySubmit(event)">
                 <input type="hidden" name="city_location" id="formCityField" value="Vancouver - Yaletown">
+                <input type="hidden" name="dispatch_channel" id="dispatchChannelField" value="SMS Text / WhatsApp Ready">
                 <input type="tel" class="modal-input" name="client_phone" placeholder="10 Digits" id="phoneInput" required pattern="[0-9]{10}">
                 <button type="submit" class="modal-circle-btn">SHOW UP READY</button>
             </form>
@@ -721,6 +747,11 @@
 
             <div class="receipt-footer-desc">
                 Your concierge is coordinating with our studio partners. You will pay the flat fee directly at the studio after your transformation.
+            </div>
+
+            <!-- WhatsApp Integration Indicator (Ready for future API hookup) -->
+            <div class="whatsapp-notice">
+                <span>💬 WhatsApp Dispatch Integration Ready</span>
             </div>
         </div>
     </div>
@@ -788,7 +819,27 @@
         function openCodeModal() { document.getElementById('codeModal').style.display = 'flex'; }
         function closeCodeModal() { document.getElementById('codeModal').style.display = 'none'; }
 
-        // Reliable Formspree Submission with Brand-Compliant Gold State & One-Time Code Protection
+        // Bulletproof Formspree Dispatch Handler (Ensures delivery and prevents silent blocking)
+        async function handleFormSubmitViaFetch(formElement, successCallback) {
+            const formData = new FormData(formElement);
+            try {
+                const response = await fetch(formElement.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'Accept': 'application/json' }
+                });
+                if (response.ok) {
+                    successCallback();
+                } else {
+                    // Fallback submission if JSON header rejects
+                    formElement.submit();
+                }
+            } catch (e) {
+                // Network fallback to traditional submit
+                formElement.submit();
+            }
+        }
+
         async function handleCodeSubmit(event) {
             event.preventDefault();
             const codeInput = document.getElementById('spurInput');
@@ -803,20 +854,12 @@
                 }
 
                 const form = event.target;
-                const formData = new FormData(form);
-
-                try {
-                    // Send to Formspree
-                    await fetch(form.action, {
-                        method: 'POST',
-                        body: formData,
-                        headers: { 'Accept': 'application/json' }
-                    });
-                    
+                
+                handleFormSubmitViaFetch(form, () => {
                     usedCodes.push(codeVal);
                     localStorage.setItem('spur_used_codes', JSON.stringify(usedCodes));
 
-                    // Visually Apply Code in Brand Gold Color
+                    // Visually Apply Code in Brand Gold Color (Strict adherence to brand policy)
                     document.getElementById('displayPrice').innerText = "$39.99 CAD";
                     document.getElementById('finalReceiptPrice').innerText = "$39.99";
                     const codeLink = document.getElementById('codeLinkText');
@@ -826,9 +869,7 @@
                     alert("✓ SPURTAN code successfully applied (-$10.00 Pilot Discount Locked)!");
                     closeCodeModal();
                     form.reset();
-                } catch (e) {
-                    alert("Network error. Please check your connection.");
-                }
+                });
             } else {
                 alert("Please follow the valid SPUR____ format.");
             }
@@ -840,20 +881,12 @@
 
             if (phoneVal.length >= 10) {
                 const form = event.target;
-                const formData = new FormData(form);
-
+                
                 document.getElementById('displayPhoneLine').innerText = "DISPATCH LINE: " + phoneVal;
 
-                try {
-                    // Send lead to Formspree reliably
-                    await fetch(form.action, {
-                        method: 'POST',
-                        body: formData,
-                        headers: { 'Accept': 'application/json' }
-                    });
-                } catch (e) {
-                    console.log("Transmission fallback active");
-                }
+                handleFormSubmitViaFetch(form, () => {
+                    console.log("Lead successfully transmitted to Formspree");
+                });
 
                 closeVerifyModal();
                 document.getElementById('mainAppContainer').style.display = 'none';
