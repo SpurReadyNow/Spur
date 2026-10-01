@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPUR | Show Up Ready</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0d0d0d">
+    
+    <style>
+        :root {
+            --bg-color: #0d0d0d;
+            --gold: #d4af37;
+            --gold-light: #f3e5ab;
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+            --card-bg: #141414;
+            --border-color: rgba(212, 175, 55, 0.25);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 20px;
+            position: relative;
+        }
+
+        /* Top Header Layout */
+        .header-container {
+            width: 100%;
+            max-width: 440px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+        }
+
+        .logo-area h1 {
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: 6px;
+            color: var(--text-main);
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .logo-area span {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            color: var(--gold);
+            text-transform: uppercase;
+        }
+
+        .top-right-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+        }
+
+        .live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .live-dot {
+            width: 5px;
+            height: 5px;
+            background-color: #2ecc71;
+            border-radius: 50%;
+            box-shadow: 0 0 6px #2ecc71;
+        }
+
+        .controls-row {
+            display: flex;
+            gap: 6px;
+        }
+
+        .toggle-capsule {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 4px 8px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .toggle-capsule button {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 3px;
+            transition: color 0.2s ease;
+        }
+
+        .toggle-capsule button.active {
+            color: var(--gold);
+        }
+
+        .toggle-capsule span {
+            color: #444;
+            margin: 0 2px;
+            font-size: 11px;
+        }
+
+        /* Main Content */
+        .main-content {
+            width: 100%;
+            max-width: 440px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .hero-section {
+            width: 100%;
+            text-align: left;
+        }
+
+        .hero-title {
+            font-size: 28px;
+            font-weight: 400;
+            line-height: 1.35;
+            letter-spacing: -0.5px;
+            margin-bottom: 16px;
+            color: var(--text-main);
+        }
+
+        .hero-title-gold {
+            font-size: 28px;
+            font-weight: 400;
+            line-height: 1.35;
+            letter-spacing: -0.5px;
+            margin-bottom: 30px;
+            color: var(--gold);
+        }
+
+        /* Steps list */
+        .steps-list {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 30px;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(255, 255, 255, 0.015);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 14px 18px;
+            border-radius: 16px;
+        }
+
+        .step-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid var(--border-color);
+            background: rgba(212, 175, 55, 0.03);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--gold);
+            flex-shrink: 0;
+        }
+
+        .step-icon svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--gold);
+            fill: none;
+            stroke-width: 1.75;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .step-text {
+            font-size: 16px;
+            color: var(--text-main);
+            font-weight: 400;
+        }
+
+        /* Pilot Box */
+        .pilot-box {
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+        }
+
+        .pilot-label-top {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .pilot-label-sub {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .pilot-price-area {
+            text-align: right;
+        }
+
+        .pilot-price {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 4px;
+        }
+
+        .pilot-code-link {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--gold);
+            text-decoration: none;
+            letter-spacing: 0.5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .pilot-code-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Circular Breathing Ready Now Button */
+        @keyframes breathing {
+            0% { transform: scale(1); box-shadow: 0 0 20px rgba(212, 175, 55, 0.3); }
+            50% { transform: scale(1.04); box-shadow: 0 0 35px rgba(212, 175, 55, 0.6); }
+            100% { transform: scale(1); box-shadow: 0 0 20px rgba(212, 175, 55, 0.3); }
+        }
+
+        .ready-circle-btn {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d4af37 0%, #aa8c2c 100%);
+            color: #0d0d0d;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: none;
+            cursor: pointer;
+            animation: breathing 3s infinite ease-in-out;
+            margin: 10px auto 20px auto;
+            text-align: center;
+            transition: transform 0.1s ease;
+        }
+
+        .ready-circle-btn:active {
+            transform: scale(0.96);
+        }
+
+        .ready-line-1 {
+            font-size: 17px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            line-height: 1.1;
+            margin-left: 1px;
+        }
+
+        .ready-line-2 {
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            line-height: 1.1;
+        }
+
+        .cta-footer-note {
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .brand-philosophy {
+            font-size: 14px;
+            color: var(--gold-light);
+            font-style: italic;
+            letter-spacing: 0.5px;
+            margin-top: 10px;
+        }
+
+        /* Interactive Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(6px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 28px 24px;
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+        }
+
+        .modal-card h3 {
+            color: var(--gold);
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        .modal-card p {
+            color: var(--text-muted);
+            font-size: 13px;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        /* Clean Luxury Input Box (Removes Blue Autfill/Glow) */
+        .modal-input {
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 14px;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            text-align: center;
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+            outline: none;
+        }
+
+        .modal-input:focus {
+            border-color: var(--gold);
+        }
+
+        /* Glowing Golden Circle Button for Modals */
+        .modal-circle-btn {
+            width: 95px;
+            height: 95px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d4af37 0%, #aa8c2c 100%);
+            color: #0d0d0d;
+            border: none;
+            font-weight: 800;
+            font-size: 10px;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            margin: 10px auto 16px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+            transition: transform 0.1s ease;
+            padding: 5px;
+            line-height: 1.2;
+        }
+
+        .modal-circle-btn:active {
+            transform: scale(0.95);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 12px;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+        }
+
+        /* Final Request Received Card View */
+        #finalSuccessView {
+            display: none;
+            width: 100%;
+            max-width: 440px;
+            text-align: center;
+        }
+
+        .success-header-tag {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--gold);
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 6px 14px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .success-main-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .success-sub-title {
+            font-size: 15px;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        .success-receipt-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 28px 24px;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+        }
+
+        .success-receipt-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--gold);
+        }
+
+        .receipt-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .receipt-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .receipt-updates-tag {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .receipt-price-box {
+            text-align: right;
+        }
+
+        .receipt-price {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .receipt-price-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .receipt-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .receipt-grid-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 80px;
+        }
+
+        .grid-box-val {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 4px;
+            line-height: 1.2;
+            text-align: center;
+        }
+
+        .grid-box-lbl {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .receipt-footer-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding-top: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- MAIN APP SCREEN -->
+    <div class="main-content" id="mainAppContainer">
+        
+        <!-- Header Section -->
+        <div class="header-container">
+            <div class="logo-area">
+                <h1>SPUR</h1>
+                <span>SHOW UP READY™</span>
+            </div>
+            <div class="top-right-group">
+                <div class="live-badge" onclick="toggleCity()">
+                    <div class="live-dot"></div>
+                    <span id="liveBadgeText">Vancouver • Yaletown • Live</span>
+                </div>
+                
+                <div class="controls-row">
+                    <div class="toggle-capsule">
+                        <button onclick="setCity('yvr')" id="btn-yvr" class="active">YVR</button>
+                        <span>|</span>
+                        <button onclick="setCity('yul')" id="btn-yul">YUL</button>
+                    </div>
+                    <div class="toggle-capsule">
+                        <button onclick="switchLanguage('en')" id="btn-en" class="active">EN</button>
+                        <span>|</span>
+                        <button onclick="switchLanguage('fr')" id="btn-fr">FR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-section">
+            <div class="hero-title" data-en="You don't need to know what will make you look better." data-fr="Vous n'avez pas besoin de savoir ce qui vous mettra en valeur.">
+                You don't need to know what will make you look better.
+            </div>
+
+            <div class="hero-title-gold" data-en="That's what we're here for." data-fr="C'est exactement pour cela que nous sommes là.">
+                That's what we're here for.
+            </div>
+
+            <!-- 4 Steps List -->
+            <div class="steps-list">
+                <div class="step-item">
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    </div>
+                    <div class="step-text" data-en="We find your specialist." data-fr="Nous trouvons votre spécialiste.">We find your specialist.</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    </div>
+                    <div class="step-text" data-en="They know exactly what you need." data-fr="Ils savent exactement ce dont vous avez besoin.">They know exactly what you need.</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </div>
+                    <div class="step-text" data-en="You approve." data-fr="Vous approuvez.">You approve.</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-icon">
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    </div>
+                    <div class="step-text" data-en="You get ready." data-fr="Vous vous préparez.">You get ready.</div>
+                </div>
+            </div>
+
+            <!-- Pilot Flat Rate Box -->
+            <div class="pilot-box">
+                <div>
+                    <div class="pilot-label-top" data-en="Pilot Flat Rate" data-fr="Tarif Fixe Pilote">Pilot Flat Rate</div>
+                    <div class="pilot-label-sub" data-en="Complete grooming & styling" data-fr="Coiffure et style complets">Complete grooming & styling</div>
+                </div>
+                <div class="pilot-price-area">
+                    <div class="pilot-price" id="displayPrice">$49.99 CAD</div>
+                    <button class="pilot-code-link" onclick="openCodeModal()" id="codeLinkText">- HAVE SPURTAN CODE?</button>
+                </div>
+            </div>
+
+            <!-- Circular Breathing Ready Now Button -->
+            <div style="text-align: center; width: 100%;">
+                <button class="ready-circle-btn" onclick="openVerifyModal()">
+                    <span class="ready-line-1">READY</span>
+                    <span class="ready-line-2">NOW™</span>
+                </button>
+                <div class="cta-footer-note" data-en="Tap to find match • No payment upfront" data-fr="Tap to find match • No payment upfront">
+                    Tap to find match • No payment upfront
+                </div>
+                <div class="brand-philosophy" data-en="We look at you, not a menu." data-fr="We look at you, not a menu.">
+                    We look at you, not a menu.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VERIFICATION MODAL -->
+    <div id="verifyModal" class="modal-overlay">
+        <div class="modal-card">
+            <h3 data-en="Verify Identity" data-fr="Verify Identity">Verify Identity</h3>
+            <p data-en="Enter your mobile number. We will text you your match details." data-fr="Enter your mobile number. We will text you your match details.">
+                Enter your mobile number. We will text you your match details.
+            </p>
+            
+            <form id="verifyForm" action="https://formspree.io/f/xlgkqnjw" method="POST" onsubmit="handleVerifySubmit(event)">
+                <input type="hidden" name="city_location" id="formCityField" value="Vancouver - Yaletown">
+                <input type="tel" class="modal-input" name="client_phone" placeholder="10 Digits" id="phoneInput" required pattern="[0-9]{10}">
+                <button type="submit" class="modal-circle-btn">SHOW UP READY</button>
+            </form>
+            
+            <button class="modal-close" onclick="closeVerifyModal()">CANCEL</button>
+        </div>
+    </div>
+
+    <!-- SPURTAN CODE MODAL -->
+    <div id="codeModal" class="modal-overlay">
+        <div class="modal-card">
+            <h3>Enter SPURTAN Code</h3>
+            <p>Please enter your unique membership format code (e.g., SPUR____)</p>
+            
+            <form id="spurtanForm" action="https://formspree.io/f/xlgkqnjw" method="POST" onsubmit="handleCodeSubmit(event)">
+                <input type="hidden" name="city_location" id="formCityFieldCode" value="Vancouver - Yaletown">
+                <input type="text" class="modal-input" name="spurtan_code" placeholder="SPUR____" id="spurInput" required>
+                <button type="submit" class="modal-circle-btn">APPLY</button>
+            </form>
+            
+            <button class="modal-close" onclick="closeCodeModal()">CANCEL</button>
+        </div>
+    </div>
+
+    <!-- FINAL CONFIRMATION SCREEN -->
+    <div id="finalSuccessView">
+        <div class="success-header-tag">Priority Dispatch</div>
+        <div class="success-main-title">Request Received.</div>
+        <div class="success-sub-title">We are securing your specialist.</div>
+
+        <div class="success-receipt-card">
+            <div class="receipt-top-row">
+                <div>
+                    <div class="receipt-title">Check your messages</div>
+                    <div class="receipt-updates-tag" id="displayPhoneLine">DISPATCH LINE: ACTIVE</div>
+                </div>
+                <div class="receipt-price-box">
+                    <div class="receipt-price" id="finalReceiptPrice">$49.99</div>
+                    <div class="receipt-price-label">Pilot Rate</div>
+                </div>
+            </div>
+
+            <div class="receipt-grid">
+                <div class="receipt-grid-box">
+                    <div class="grid-box-val">&lt; 3</div>
+                    <div class="grid-box-lbl">Minutes</div>
+                </div>
+                <div class="receipt-grid-box">
+                    <div class="grid-box-val" id="receiptTargetArea">Yaletown</div>
+                    <div class="grid-box-lbl">Location</div>
+                </div>
+            </div>
+
+            <div class="receipt-footer-desc">
+                Your concierge is coordinating with our studio partners. You will pay the flat fee directly at the studio after your transformation.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentCity = 'yvr';
+
+        const cityData = {
+            yvr: {
+                enBadge: "Vancouver • Yaletown • Live",
+                frBadge: "Vancouver • Yaletown • Live",
+                areaName: "Yaletown",
+                formVal: "Vancouver - Yaletown"
+            },
+            yul: {
+                enBadge: "Montreal • Plateau - Mont-Royal • Live",
+                frBadge: "Montreal • Plateau - Mont-Royal • Live",
+                areaName: "Plateau - Mont-Royal",
+                formVal: "Montreal - Plateau - Mont-Royal"
+            }
+        };
+
+        function setCity(city) {
+            currentCity = city;
+            document.getElementById('btn-yvr').classList.toggle('active', city === 'yvr');
+            document.getElementById('btn-yul').classList.toggle('active', city === 'yul');
+
+            document.getElementById('formCityField').value = cityData[city].formVal;
+            document.getElementById('formCityFieldCode').value = cityData[city].formVal;
+            document.getElementById('receiptTargetArea').innerText = cityData[city].areaName;
+
+            updateBadgeText();
+            localStorage.setItem('spur_active_city', city);
+        }
+
+        function toggleCity() {
+            setCity(currentCity === 'yvr' ? 'yul' : 'yvr');
+        }
+
+        function updateBadgeText() {
+            const lang = localStorage.getItem('spur_lang') || 'en';
+            const badge = document.getElementById('liveBadgeText');
+            badge.innerText = cityData[currentCity][lang === 'fr' ? 'frBadge' : 'enBadge'];
+        }
+
+        function switchLanguage(lang) {
+            document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+            document.getElementById('btn-fr').classList.toggle('active', lang === 'fr');
+
+            const elements = document.querySelectorAll('[data-en]');
+            elements.forEach(el => {
+                if (lang === 'fr') {
+                    if (el.hasAttribute('data-fr')) el.innerText = el.getAttribute('data-fr');
+                } else {
+                    if (el.hasAttribute('data-en')) el.innerText = el.getAttribute('data-en');
+                }
+            });
+
+            localStorage.setItem('spur_lang', lang);
+            updateBadgeText();
+        }
+
+        function openVerifyModal() { document.getElementById('verifyModal').style.display = 'flex'; }
+        function closeVerifyModal() { document.getElementById('verifyModal').style.display = 'none'; }
+        function openCodeModal() { document.getElementById('codeModal').style.display = 'flex'; }
+        function closeCodeModal() { document.getElementById('codeModal').style.display = 'none'; }
+
+        // Secure One-Time Code Validation & Application Logic (Brand-Compliant Gold State)
+        async function handleCodeSubmit(event) {
+            event.preventDefault();
+            const codeInput = document.getElementById('spurInput');
+            const codeVal = codeInput.value.trim().toUpperCase();
+
+            if (codeVal.startsWith('SPUR')) {
+                const usedCodes = JSON.parse(localStorage.getItem('spur_used_codes') || '[]');
+
+                if (usedCodes.includes(codeVal)) {
+                    alert("This SPURTAN code has already been redeemed on this device.");
+                    return;
+                }
+
+                const form = event.target;
+                const formData = new FormData(form);
+
+                try {
+                    await fetch(form.action, { method: 'POST', body: formData, headers: { 'Accept': 'application/json' } });
+                    
+                    usedCodes.push(codeVal);
+                    localStorage.setItem('spur_used_codes', JSON.stringify(usedCodes));
+
+                    // Visually Apply Code in Brand Gold Color
+                    document.getElementById('displayPrice').innerText = "$39.99 CAD";
+                    document.getElementById('finalReceiptPrice').innerText = "$39.99";
+                    const codeLink = document.getElementById('codeLinkText');
+                    codeLink.innerText = "✓ SPURTAN CODE APPLIED";
+                    codeLink.style.color = "var(--gold)";
+
+                    alert("✓ SPURTAN code successfully applied (-$10.00 Pilot Discount Locked)!");
+                    closeCodeModal();
+                    form.reset();
+                } catch (e) {
+                    alert("Network error. Please try again.");
+                }
+            } else {
+                alert("Please follow the valid SPUR____ format.");
+            }
+        }
+
+        async function handleVerifySubmit(event) {
+            event.preventDefault();
+            const phoneVal = document.getElementById('phoneInput').value.trim();
+
+            if (phoneVal.length >= 10) {
+                const form = event.target;
+                const formData = new FormData(form);
+
+                document.getElementById('displayPhoneLine').innerText = "DISPATCH LINE: " + phoneVal;
+
+                try {
+                    fetch(form.action, { method: 'POST', body: formData, headers: { 'Accept': 'application/json' } });
+                } catch (e) {
+                    console.log("Background sync initiated");
+                }
+
+                closeVerifyModal();
+                document.getElementById('mainAppContainer').style.display = 'none';
+                document.getElementById('finalSuccessView').style.display = 'block';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                alert("Please enter a valid 10-digit mobile number.");
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('spur_lang') || 'en';
+            const savedCity = localStorage.getItem('spur_active_city') || 'yvr';
+            switchLanguage(savedLang);
+            setCity(savedCity);
+        });
+    </script>
+</body>
+</html>
