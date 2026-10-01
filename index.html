@@ -317,9 +317,10 @@
             margin-bottom: 20px;
         }
 
+        /* Updated to primary gold color */
         .brand-philosophy {
             font-size: 14px;
-            color: var(--gold-light);
+            color: var(--gold);
             font-style: italic;
             letter-spacing: 0.5px;
             margin-top: 10px;
@@ -365,7 +366,7 @@
             line-height: 1.4;
         }
 
-        /* LOCKED DARK INPUT (Fixes Blue Mobile Highlights) */
+        /* LOCKED DARK INPUT */
         .modal-input {
             width: 100%;
             background-color: #141414 !important;
@@ -516,6 +517,7 @@
             font-size: 22px;
             font-weight: 700;
             color: var(--gold);
+            margin-bottom: 4px;
         }
 
         .receipt-price-label {
@@ -688,10 +690,9 @@
                 Enter your mobile number. We will text you your match details.
             </p>
             
-            <!-- FORMSPREE ID CONFIGURED HERE -->
             <form id="verifyForm" action="https://formspree.io/f/mjykllwj" method="POST" onsubmit="handleVerifySubmit(event)">
                 <input type="hidden" name="city_location" id="formCityField" value="Vancouver - Yaletown">
-                <input type="hidden" name="dispatch_channel" value="WhatsApp Integration Requested">
+                <input type="hidden" name="dispatch_channel" value="SMS / WhatsApp Ready">
                 <input type="tel" class="modal-input" name="client_phone" placeholder="10 Digits" id="phoneInput" required pattern="[0-9]{10}">
                 <button type="submit" class="modal-circle-btn">SHOW UP READY</button>
             </form>
@@ -706,7 +707,6 @@
             <h3>Enter SPURTAN Code</h3>
             <p>Please enter your unique membership format code (e.g., SPUR____)</p>
             
-            <!-- FORMSPREE ID CONFIGURED HERE -->
             <form id="spurtanForm" action="https://formspree.io/f/mjykllwj" method="POST" onsubmit="handleCodeSubmit(event)">
                 <input type="hidden" name="city_location" id="formCityFieldCode" value="Vancouver - Yaletown">
                 <input type="text" class="modal-input" name="spurtan_code" placeholder="SPUR____" id="spurInput" required>
@@ -750,9 +750,8 @@
                 Your concierge is coordinating with our studio partners. You will pay the flat fee directly at the studio after your transformation.
             </div>
 
-            <!-- WhatsApp Indicator -->
             <div class="whatsapp-notice">
-                <span>💬 WhatsApp Dispatch Ready</span>
+                <span>💬 WhatsApp / SMS Dispatch Ready</span>
             </div>
         </div>
     </div>
@@ -815,12 +814,37 @@
             updateBadgeText();
         }
 
-        function openVerifyModal() { document.getElementById('verifyModal').style.display = 'flex'; }
+        function openVerifyModal() { 
+            // Bypass phone request if already securely stored on the device
+            const savedPhone = localStorage.getItem('spur_user_phone');
+            if (savedPhone) {
+                document.getElementById('displayPhoneLine').innerText = "DISPATCH LINE: " + savedPhone;
+                
+                // Submit silently in the background so you still get the lead email
+                const formData = new FormData();
+                formData.append('client_phone', savedPhone);
+                formData.append('city_location', document.getElementById('formCityField').value);
+                formData.append('dispatch_channel', 'Returning User Auto-Dispatch');
+                
+                fetch("https://formspree.io/f/mjykllwj", {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'Accept': 'application/json' }
+                }).catch(e => console.log(e));
+
+                // Jump directly to success view
+                document.getElementById('mainAppContainer').style.display = 'none';
+                document.getElementById('finalSuccessView').style.display = 'block';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                document.getElementById('verifyModal').style.display = 'flex'; 
+            }
+        }
+        
         function closeVerifyModal() { document.getElementById('verifyModal').style.display = 'none'; }
         function openCodeModal() { document.getElementById('codeModal').style.display = 'flex'; }
         function closeCodeModal() { document.getElementById('codeModal').style.display = 'none'; }
 
-        // AJAX Submission to Formspree
         async function handleCodeSubmit(event) {
             event.preventDefault();
             const codeInput = document.getElementById('spurInput');
@@ -857,7 +881,7 @@
                     closeCodeModal();
                     form.reset();
                 } catch (e) {
-                    alert("Submission error. Please ensure you are connected to the internet.");
+                    form.submit();
                 }
             } else {
                 alert("Please follow the valid SPUR____ format.");
@@ -872,6 +896,9 @@
                 const form = event.target;
                 const formData = new FormData(form);
 
+                // Remember phone number for next time
+                localStorage.setItem('spur_user_phone', phoneVal);
+
                 document.getElementById('displayPhoneLine').innerText = "DISPATCH LINE: " + phoneVal;
 
                 try {
@@ -881,10 +908,9 @@
                         headers: { 'Accept': 'application/json' }
                     });
                 } catch (e) {
-                    console.error("Formspree fallback triggered.");
+                    console.log("Transmission fallback active");
                 }
 
-                // Show Final Success Screen
                 closeVerifyModal();
                 document.getElementById('mainAppContainer').style.display = 'none';
                 document.getElementById('finalSuccessView').style.display = 'block';
